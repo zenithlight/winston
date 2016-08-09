@@ -42,6 +42,7 @@ class Logging:
     async def handle_event(self, event):
         if event['type'] == 'command' and event['command'] == 'logging':
             try:
+                event['message'].content = event['message'].clean_content # fix channels in titles being an id instead of the channel name
                 result = self.argument_parser.parse_args(event['arguments'])
             except (ValueError, argparse.ArgumentTypeError) as error:
                 await self.client.send_message(event['message'].channel, str(error))
@@ -121,7 +122,7 @@ class Logging:
             message_list.append(message)
 
         content = ''
-        for message in message_list[::-1]
+        for message in message_list[::-1]:
             content += format_message(self.settings.data['format'], message) + '\n'
 
         log_file.SetContentString(content)
