@@ -43,7 +43,7 @@ class Logging:
         if event['type'] == 'command' and event['command'] == 'logging':
             try:
                 result = self.argument_parser.parse_args(event['arguments'])
-                clean_result = self.argument_parse.parse_args(event['clean_arguments'])
+                clean_result = self.argument_parser.parse_args(event['clean_arguments'])
 
             except (ValueError, argparse.ArgumentTypeError) as error:
                 await self.client.send_message(event['message'].channel, str(error))
