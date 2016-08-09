@@ -47,8 +47,6 @@ class Logging:
                 await self.client.send_message(event['message'].channel, str(error))
                 return
 
-            print(vars(result))
-
             if getattr(result, 'start'):
                 # await self.start_logging()
                 return
@@ -118,7 +116,12 @@ class Logging:
         content = ''
         log_file = self.google_drive.CreateFile({'title': title, 'parents': [{'id': self.settings.data['folder']}]})
 
+        message_list = []
         async for message in self.client.logs_from(channel, limit=limit):
+            message_list.append(message)
+
+        content = ''
+        for message in message_list[::-1]
             content += format_message(self.settings.data['format'], message) + '\n'
 
         log_file.SetContentString(content)
@@ -135,4 +138,4 @@ class Logging:
         self.argument_parser.add_argument('title', action='store', type=str, nargs='?', help='Title of the Google Drive document.')
 
 def format_message(format_string, message):
-    return format_string.format(author=message.author.name, date=message.timestamp, message=message.content)
+    return format_string.format(author=message.author.name, date=message.timestamp, message=message.clean_content)
