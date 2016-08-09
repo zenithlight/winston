@@ -1,0 +1,9 @@
+{
+    "channel": "meeting",
+    "title": "[#{channel}] {date:%B %d, %Y}.txt",
+    "format": "{author} [{date:%H:%M:%S}]: {message}",
+    "start": "0 11 * * 0",
+    "stop": "0 11 * * 1",
+    "interval": 5000,
+    "folder": null
+}

@@ -2,5 +2,4 @@
 __pycache__
 *.pyc
 credentials.json
-settings.json
 settings.yaml
