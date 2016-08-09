@@ -42,8 +42,9 @@ class Logging:
     async def handle_event(self, event):
         if event['type'] == 'command' and event['command'] == 'logging':
             try:
-                event['message'].content = event['message'].clean_content # fix channels in titles being an id instead of the channel name
                 result = self.argument_parser.parse_args(event['arguments'])
+                clean_result = self.argument_parse.parse_args(event['clean_arguments'])
+
             except (ValueError, argparse.ArgumentTypeError) as error:
                 await self.client.send_message(event['message'].channel, str(error))
                 return
@@ -57,7 +58,7 @@ class Logging:
                 return
 
             if getattr(result, 'force'):
-                await self.force_log(getattr(result, 'channel'), getattr(result, 'limit'), getattr(result, 'title'))
+                await self.force_log(getattr(result, 'channel'), getattr(result, 'limit'), getattr(clean_result, 'title'))
 
         # if event['type'] == 'message':
         #     message = event['message']

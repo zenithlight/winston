@@ -31,11 +31,14 @@ class Command:
             message = event['message']
             if message.content.startswith(self.settings.data['prefix']):
                 split_text = shlex.split(message.content[len(self.settings.data['prefix']):])
+                clean_split_text = shlex.split(message.clean_content[len(self.settings.data['prefix']):])
+
                 await self.client.event_queue.put({
                     'type': 'command',
                     'message': message,
                     'command': split_text[0],
                     'arguments': split_text[1:]
+                    'clean_arguments': clean_split_text[1:]
                 })
 
     def initialize_command(self):
