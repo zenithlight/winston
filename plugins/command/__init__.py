@@ -37,7 +37,7 @@ class Command:
                     'type': 'command',
                     'message': message,
                     'command': split_text[0],
-                    'arguments': split_text[1:]
+                    'arguments': split_text[1:],
                     'clean_arguments': clean_split_text[1:]
                 })
 
