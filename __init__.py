@@ -27,7 +27,7 @@ async def on_message(message):
 
 @client.event
 async def on_message_edit(before, after):
-    await client.event_queue.put({ 'type': 'message', 'message', after})
+    await client.event_queue.put({ 'type': 'message', 'message': after})
 
 async def process_events():
     await client.wait_until_ready()
