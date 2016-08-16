@@ -12,23 +12,9 @@ class GitHub:
 
             async def on_payload(request):
                 payload = await request.json()
-                event_type = request.headers['X-GitHub-Event']
+                event = request.headers['X-GitHub-Event']
 
-                if event_type == 'push':
-                    text = '**{}** pushed {} {} to *{}*:\n'.format(
-                        payload['head_commit']['committer']['username'],
-                        len(payload['commits']),
-                        'commit' if len(payload['commits']) == 1 else 'commits',
-                        payload['repository']['name'] + '/' + payload['ref'][11:]
-                    )
-
-                    for commit in payload['commits']:
-                        text += '    `{}` {}\n'.format(commit['id'][:8], commit['message'])
-
-                else:
-                    text = 'GitHub event: ' + event_type
-
-                await client.send_message(self.channel, text)
+                await client.event_queue.put({ 'type': 'github', 'event': event, 'payload': payload })
                 return aiohttp.web.Response(status=200)
 
             server.router.add_route('POST', '/webhooks', on_payload)
@@ -40,7 +26,22 @@ class GitHub:
         webhook_server_thread.start()
 
     async def handle_event(self, event):
-        pass
+        if event['type'] == 'github':
+            if event['event'] == 'push':
+                text = '**{}** pushed {} {} to *{}*:\n'.format(
+                    event['payload']['head_commit']['committer']['username'],
+                    len(event['payload']['commits']),
+                    'commit' if len(event['payload']['commits']) == 1 else 'commits',
+                    event['payload']['repository']['name'] + '/' + event['payload']['ref'][11:]
+                )
+
+                for commit in event['payload']['commits']:
+                    text += '    `{}` {}\n'.format(commit['id'][:8], commit['message'])
+
+            else:
+                text = 'GitHub event: ' + event['event']
+
+            await self.client.send_message(self.channel, text)
 
 def find_channel(client, channel_name):
     for server in client.servers:
