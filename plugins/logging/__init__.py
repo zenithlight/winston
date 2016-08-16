@@ -31,7 +31,7 @@ class Logging:
     async def start_logging_maybe(self):
         await self.client.wait_until_ready()
 
-        self.channel = self.find_channel(self.settings.data['channel'])
+        self.channel = find_channel(self.client, self.settings.data['channel'])
 
         previous_start = self.start_cron.get_prev()
         previous_stop = self.stop_cron.get_prev()
@@ -107,14 +107,8 @@ class Logging:
     def update_soon(self):
         self.client.loop.run_until_complete(update)
 
-    def find_channel(self, channel_name):
-        for server in self.client.servers:
-            for channel in server.channels:
-                if channel.name == channel_name:
-                    return channel
-
     async def force_log(self, channel_name, limit, title): # archives all previous messages in a channel
-        channel = self.find_channel(channel_name)
+        channel = find_channel(self.client, channel_name)
         content = ''
         log_file = self.google_drive.CreateFile({'title': title, 'parents': [{'id': self.settings.data['folder']}]})
 
@@ -141,3 +135,9 @@ class Logging:
 
 def format_message(format_string, message):
     return format_string.format(author=message.author.name, date=message.timestamp, message=message.clean_content)
+
+def find_channel(client, channel_name):
+    for server in client.servers:
+        for channel in server.channels:
+            if channel.name == channel_name:
+                return channel

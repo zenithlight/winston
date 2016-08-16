@@ -10,6 +10,7 @@ from plugins.command import Command
 from plugins.roll import Roll
 from plugins.help import Help
 from plugins.logging import Logging
+from plugins.github import GitHub
 
 client = discord.Client()
 
@@ -18,7 +19,7 @@ client.event_queue = asyncio.Queue()
 
 @client.event
 async def on_ready():
-    client.plugins = [Command(client), Roll(client), Help(client), Logging(client)]
+    client.plugins = [Command(client), Roll(client), Help(client), Logging(client), GitHub(client)]
     print('Connected!')
 
 @client.event
